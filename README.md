@@ -1,23 +1,89 @@
 # Metro Saarthi
 
-> Plan a better journey through the city.
+> A graph-powered metro route planner for faster, clearer journeys.
 
-Metro Saarthi is a polished, client-side metro route planner for a Delhi NCR-inspired network. Choose your origin and destination, compare two route strategies, and get a clear journey breakdown with distance, travel time, stops, interchanges, and estimated fare.
+Metro Saarthi is a client-side React application for exploring a Delhi NCR-inspired metro network. Select two stations, choose what matters most for your journey, and compare routes with practical details such as distance, stops, interchanges, estimated time, and fare.
 
-## Highlights
+## Product Snapshot
 
-- **Interactive station search** with source and destination selectors
-- **Shortest-distance routing** powered by Dijkstra's algorithm
-- **Fewest-stops routing** powered by breadth-first search (BFS)
-- **Side-by-side route comparison** for distance, stops, and journey time
-- **Visual network map** with the active route highlighted
-- **Journey timeline** showing each station and interchange
-- **Smart estimates** for fare, dwell time, and interchange time
-- Responsive interface designed for desktop and mobile screens
+| Area | Current implementation |
+| --- | --- |
+| Network | 22 stations across 4 metro lines |
+| Route modes | Shortest distance and minimum stops |
+| Algorithms | Dijkstra's algorithm and breadth-first search |
+| Output | Map highlight, route comparison, timeline, and estimates |
+| Architecture | Client-side React app with no backend or external API |
 
-## Preview
+## Core Experience
 
-![Metro Saarthi route planner](src/assets/hero.png)
+- Search and select a **From** and **To** station
+- Swap stations in one action
+- Choose between **Shortest route** and **Fewest stops**
+- View both route options side by side
+- Inspect the active route on the network map
+- Follow the station-by-station journey timeline
+- Review distance, time, stops, interchanges, and estimated fare
+
+## Route Planning Flow
+
+```mermaid
+flowchart LR
+	A[Select origin] --> C[Build route request]
+	B[Select destination] --> C
+	C --> D{Route preference}
+	D -->|Shortest distance| E[Dijkstra]
+	D -->|Fewest stops| F[BFS]
+	E --> G[Summarize route]
+	F --> G
+	G --> H[Calculate fare and time]
+	H --> I[Compare both routes]
+	I --> J[Render map and timeline]
+```
+
+## Graph Model
+
+Stations are graph nodes. Metro connections are bidirectional weighted edges containing distance, travel time, and line information.
+
+```mermaid
+graph TD
+	R[Rajiv Chowk] --- C[Central Secretariat]
+	R --- N[New Delhi]
+	C --- K[Karol Bagh]
+	N --- A[Aerocity]
+	A --- AT[Airport Terminal]
+	R --- L[Lajpat Nagar]
+	L --- H[Hauz Khas]
+	H --- B[Botanical Garden]
+```
+
+The planner computes both route variants for every valid request, then derives the user-facing summary from the selected path.
+
+## Algorithms
+
+| Strategy | Algorithm | Optimizes for | Best suited to |
+| --- | --- | --- | --- |
+| Shortest distance | Dijkstra | Total edge distance | A shorter physical journey |
+| Fewest stops | BFS | Number of edges | Fewer station stops |
+
+### Journey estimates
+
+Route summaries include:
+
+- total distance and number of stations
+- estimated travel time
+- interchange count
+- estimated fare in Indian rupees
+- station-by-station timeline
+
+Journey time includes a 30-second dwell estimate per stop and 5 minutes per interchange, as implemented in the route utilities.
+
+## Technology
+
+- **React** for the interface and component architecture
+- **Vite** for development and production builds
+- **JavaScript** for graph, fare, and journey calculations
+- **Lucide React** for interface icons
+- **Custom CSS** with the Tailwind CSS Vite plugin available in the toolchain
 
 ## Getting Started
 
@@ -35,52 +101,27 @@ npm install
 npm run dev
 ```
 
-Open the local URL shown by Vite, usually `http://localhost:5173`.
+Open the local URL printed by Vite, usually `http://localhost:5173`.
 
-### Production build
+### Build for production
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## How It Works
-
-The application models stations as graph nodes and metro connections as weighted edges. When a journey is requested, Metro Saarthi calculates both available route views:
-
-| Route view | Algorithm | Optimizes for |
-| --- | --- | --- |
-| Shortest distance | Dijkstra | Total kilometres |
-| Minimum stops | BFS | Number of station stops |
-
-Each selected route is then summarized with:
-
-- total distance and station count
-- estimated journey time
-- interchange count
-- estimated Indian rupee fare
-- station-by-station timeline
-
-## Tech Stack
-
-- **React** for the interface and component architecture
-- **Vite** for development and production builds
-- **JavaScript** for route and fare calculations
-- **Lucide React** for interface icons
-- **Tailwind CSS Vite plugin** alongside custom CSS styling
-
 ## Project Structure
 
 ```text
 src/
-├── algorithms/       # BFS and Dijkstra implementations
-├── assets/           # Visual and static assets
-├── components/       # Navigation, map, picker, route, and feature UI
-├── data/             # Stations, lines, and graph connections
-├── hooks/            # Route-planning state and orchestration
-├── utils/            # Fare, journey-time, and route helpers
-├── App.jsx           # Main application layout
-└── style.css         # Visual system and responsive styling
+|-- algorithms/       BFS and Dijkstra implementations
+|-- assets/           Visual and static assets
+|-- components/       Map, picker, navigation, and route UI
+|-- data/             Stations, lines, and graph connections
+|-- hooks/            Route-planning state and orchestration
+|-- utils/            Fare, journey-time, and route helpers
+|-- App.jsx           Main application layout
+`-- style.css         Visual system and responsive styling
 ```
 
 ## Available Scripts
@@ -91,9 +132,9 @@ src/
 | `npm run build` | Create an optimized production build |
 | `npm run preview` | Preview the production build locally |
 
-## Data and Scope
+## Scope and Data
 
-The current network is a self-contained demonstration dataset with 22 stations across four named lines. It does not call an external transit API, require a backend, or provide live service alerts. Network data can be expanded in `src/data/metroData.js`.
+Metro Saarthi currently uses a self-contained demonstration dataset in `src/data/metroData.js`. It does not use live transit data, external station APIs, authentication, or a backend service. The network can be expanded by adding stations and connections to the data model.
 
 ## License
 
